@@ -1,7 +1,9 @@
 <?php
 namespace MySkewHell\Tuple;
 
-abstract class Tuple implements TupleInterface {
+use Traversable;
+
+abstract class Tuple implements TupleInterface, \IteratorAggregate {
 
     protected           $namedPlaceHolders  =   false;
     protected           $field              =   '';
@@ -105,6 +107,16 @@ abstract class Tuple implements TupleInterface {
             return $this->getValues();
         else
             return implode(', ', $this->getValues());
+    }
+
+    /**
+     * Retrieve an external iterator
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     */
+    public function getIterator() {
+        return new \ArrayIterator($this->getValues());
     }
 
     /**

@@ -2,7 +2,9 @@
 namespace MySkewHell\Tuple;
 
 
-abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, TupleInterface {
+use Traversable;
+
+abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, TupleInterface, \IteratorAggregate {
 
     /**
      * @var TupleInterface[]
@@ -110,6 +112,16 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
             $tuple->useNamedPlaceHolders($value);
 
         return $this;
+    }
+
+    /**
+     * Retrieve an external iterator
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     */
+    public function getIterator() {
+        return new \ArrayIterator($this->getValues());
     }
 
     /**
