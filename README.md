@@ -9,7 +9,7 @@ Each value will be transfomed to a placeholder ; you can then bind each placehol
 
 ## Building a query : working with placeholders and values
 
-#### Position placeholders (default)
+#### positional placeholders (default)
 
 ```php
 $sql        =   "SELECT * FROM users WHERE 1" . PHP_EOL;
@@ -218,7 +218,7 @@ WHERE 1
 
 ## Examples with PDO
 
-#### Using position placeholders
+#### Using positional placeholders
 ```php
 $pdo        =   new PDO("mysql:host=localhost;dbname=mydb", "username", "password");
 $stmt       =   $pdo->prepare($sql);
@@ -244,7 +244,7 @@ var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
 
 ## Examples with [PDOExtended][1]
 
-#### Using position placeholders
+#### Using positional placeholders
 ```php
 $pdo        =   new PDOExtended("mysql:host=localhost;dbname=mydb", "username", "password");
 $stmt       =   $pdo->prepare($sql);
