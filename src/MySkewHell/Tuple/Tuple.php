@@ -86,7 +86,7 @@ abstract class Tuple implements TupleInterface {
      * @return array
      */
     public function getPlaceHolders() {
-        return ($this->useNamedPlaceHolders()) ?  array_fill(0, count($this->values), sprintf(':%s', $this->getField(false))) : array_fill(0, count($this->values), '?');
+        return ($this->useNamedPlaceHolders()) ?  array_fill(0, count($this->values), sprintf(':%s', $this->escapeNamedPlaceHolder($this->getField(false)))) : array_fill(0, count($this->values), '?');
     }
 
     /**
@@ -156,6 +156,14 @@ abstract class Tuple implements TupleInterface {
             return $field;
         }
         return sprintf('`%s`', $field);
+    }
+
+    /**
+     * @param $placeHolder
+     * @return string
+     */
+    public static function escapeNamedPlaceHolder($placeHolder) {
+        return strpos($placeHolder, '.') !== false ? str_replace('.', '__', $placeHolder) : $placeHolder;
     }
 
 } 
