@@ -1,0 +1,25 @@
+{
+  "name": "myskewhell/tuple",
+  "type": "library",
+  "description": "Tuple management",
+  "homepage": "https://github.com/bpolaszek/myskewhell-tuple",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Beno!t POLASZEK",
+      "role": "Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/bpolaszek/myskewhell-tuple"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-4": {"MySkewHell\\": "src/MySkewHell"}
+  }
+}
