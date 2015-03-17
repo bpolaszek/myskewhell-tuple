@@ -223,7 +223,7 @@ WHERE 1
 $pdo        =   new PDO("mysql:host=localhost;dbname=mydb", "username", "password");
 $stmt       =   $pdo->prepare($sql);
 
-foreach ($tuples->getValues() AS $key => $value)
+foreach ($tuples AS $key => $value)
     $stmt->bindValue(++$key, $value);
 
 $stmt->execute();
@@ -235,7 +235,7 @@ var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
 $pdo        =   new PDO("mysql:host=localhost;dbname=mydb", "username", "password");
 $stmt       =   $pdo->prepare($sql);
 
-foreach ($tuples->getValues() AS $key => $value)
+foreach ($tuples AS $key => $value)
     $stmt->bindValue(sprintf(':%s', $key), $value);
 
 $stmt->execute();
