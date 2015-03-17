@@ -40,6 +40,7 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
      * @return $this
      */
     public function addTuple(TupleInterface $tuple) {
+        $tuple->useNamedPlaceHolders($this->useNamedPlaceHolders());
         $this->tuples[] =   $tuple;
         return $this;
     }
@@ -54,7 +55,13 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
         if (!static::IsAnArrayOfTupleInterface($tuples))
             throw new TupleException("This is not an array of TupleInterface");
 
-        $this->tuples = array_filter($tuples, function($tuple) { return ($tuple instanceof TupleInterface); });
+        $tuples = array_filter($tuples, function($tuple) { return ($tuple instanceof TupleInterface); });
+
+        $this->tuples   =   [];
+
+        foreach ($tuples AS $tuple)
+            $this->addTuple($tuple);
+
         return $this;
     }
 
@@ -181,6 +188,9 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
             return $this->addTuple(TupleFactory::LoadTuple($value));
     }
 
+    /**
+     * @return int
+     */
     public function count() {
         return count($this->tuples);
     }
