@@ -13,9 +13,15 @@ class ComparisonTuple extends Tuple {
         if (!$this->ValidateArray($tuple))
             throw new TupleException("Invalid tuple " . print_r($tuple, true));
 
+        if (is_array($tuple[2]))
+            $values =   $tuple[2];
+
+        else
+            $values =   [$tuple[2]];
+
         $this->setField($tuple[0]);
         $this->setOperator($tuple[1]);
-        $this->setValues((array) $tuple[2]);
+        $this->setValues($values);
     }
 
     /**

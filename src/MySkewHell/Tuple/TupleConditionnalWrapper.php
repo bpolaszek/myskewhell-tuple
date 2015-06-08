@@ -9,9 +9,9 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
     /**
      * @var TupleInterface[]
      */
-    protected   $tuples   =   [];
-
+    protected   $tuples             =   [];
     protected   $namedPlaceHolders  =   false;
+    protected   $wrapFields         =   true;
 
     public function __construct($input = null) {
         if (!is_null($input))
@@ -24,14 +24,23 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
      * @return $this
      */
     public function loadTuple($input) {
-        if (static::IsAnArrayOfTupleInterface($input))
-            return $this->setTuples($input);
+        if (static::IsAnArrayOfTupleInterface($input)) {
+            foreach ($input AS $tuple)
+                $tuple->useNamedPlaceHolders($this->useNamedPlaceHolders())->wrapFields($this->wrapFields());
+            return $this->addTuples($input);
+        }
 
-        elseif ($input instanceof TupleInterface)
+        elseif ($input instanceof TupleInterface) {
+            $input->useNamedPlaceHolders($this->useNamedPlaceHolders())->wrapFields($this->wrapFields());
             return $this->addTuple($input);
+        }
 
-        elseif ((is_array($input) || is_string($input)) && TupleFactory::IsTuplable($input))
-            return $this->addTuple(TupleFactory::LoadTuple($input));
+        elseif ((is_array($input) || is_string($input)) && TupleFactory::IsTuplable($input)) {
+            $tuple = TupleFactory::LoadTuple($input);
+            $tuple->useNamedPlaceHolders($this->useNamedPlaceHolders())->wrapFields($this->wrapFields());
+            return $this->addTuple($tuple);
+        }
+        return $this;
     }
 
     /**
@@ -40,8 +49,17 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
      * @return $this
      */
     public function addTuple(TupleInterface $tuple) {
-        $tuple->useNamedPlaceHolders($this->useNamedPlaceHolders());
         $this->tuples[] =   $tuple;
+        return $this;
+    }
+
+    /**
+     * @param array $tuples
+     * @return $this
+     */
+    public function addTuples(array $tuples) {
+        foreach ($tuples AS $tuple)
+            $this->addTuple($tuple);
         return $this;
     }
 
@@ -50,18 +68,12 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
      * @return $this
      * @throws TupleException
      */
-    public function setTuples(Array $tuples) {
+    public function setTuples(array $tuples) {
 
         if (!static::IsAnArrayOfTupleInterface($tuples))
             throw new TupleException("This is not an array of TupleInterface");
 
-        $tuples = array_filter($tuples, function($tuple) { return ($tuple instanceof TupleInterface); });
-
-        $this->tuples   =   [];
-
-        foreach ($tuples AS $tuple)
-            $this->addTuple($tuple);
-
+        $this->tuples = array_filter($tuples, function($tuple) { return ($tuple instanceof TupleInterface); });
         return $this;
     }
 
@@ -117,6 +129,21 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
         $this->namedPlaceHolders    =   (bool) $value;
         foreach ($this->getTuples() As $tuple)
             $tuple->useNamedPlaceHolders($value);
+
+        return $this;
+    }
+
+    /**
+     * @param $value
+     * @return $this
+     */
+    public function wrapFields($value = null) {
+        if (is_null($value))
+            return $this->wrapFields;
+
+        $this->wrapFields    =   (bool) $value;
+        foreach ($this->getTuples() As $tuple)
+            $tuple->wrapFields($value);
 
         return $this;
     }
@@ -182,15 +209,9 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
      * @return $this|void
      */
     public function offsetSet($offset, $value) {
-        if ($value instanceof TupleInterface)
-            return $this->addTuple($value);
-        elseif ((is_array($value) || is_string($value)) && TupleFactory::IsTuplable($value))
-            return $this->addTuple(TupleFactory::LoadTuple($value));
+        $this->loadTuple($value);
     }
 
-    /**
-     * @return int
-     */
     public function count() {
         return count($this->tuples);
     }

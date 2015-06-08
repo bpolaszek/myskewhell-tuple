@@ -6,6 +6,7 @@ use Traversable;
 abstract class Tuple implements TupleInterface, \IteratorAggregate {
 
     protected           $namedPlaceHolders  =   false;
+    protected           $wrapFields         =   true;
     protected           $field              =   '';
     protected           $operator           =   '';
     protected           $values             =   [];
@@ -85,6 +86,18 @@ abstract class Tuple implements TupleInterface, \IteratorAggregate {
     }
 
     /**
+     * @param boolean $value
+     * @return $this - Provides Fluent Interface
+     */
+    public function wrapFields($value = null) {
+        if (is_null($value))
+            return $this->wrapFields;
+        else
+            $this->wrapFields = (bool) $value;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getPlaceHolders() {
@@ -160,7 +173,11 @@ abstract class Tuple implements TupleInterface, \IteratorAggregate {
      * @param string $field
      * @return string
      */
-    public static function WrapField($field) {
+    public function wrapField($field) {
+
+        if (!$this->wrapFields())
+            return $field;
+
         if (strpos($field, '.') !== false) {
             $field      =   explode('.', $field);
             $field[1]   =   sprintf('`%s`', $field[1]);

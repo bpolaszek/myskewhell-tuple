@@ -13,9 +13,15 @@ class SimpleRangeTuple extends Tuple {
         if (!$this->ValidateArray($tuple))
             throw new TupleException("Invalid tuple " . print_r($tuple, true));
 
+        if (is_array($tuple[2]))
+            $values =   $tuple[2];
+
+        else
+            $values =   [$tuple[2]];
+
         $this->setField($tuple[0]);
         $this->setOperator($tuple[1]);
-        $this->setValues((array) $tuple[2]);
+        $this->setValues($values);
     }
 
     /**
@@ -26,7 +32,7 @@ class SimpleRangeTuple extends Tuple {
         if ($this->useNamedPlaceHolders() && count($this->values) > 1) {
             $placeHolders   =   [];
             for ($i = 1; $i <= count($this->values); $i++)
-                $placeHolders[] =   sprintf(':%s%d', $this->getField(false), $i);
+                $placeHolders[] =   sprintf(':%s%d', $this->escapeNamedPlaceHolder($this->getField(false)), $i);
             return $placeHolders;
         }
         return parent::getPlaceHolders();
