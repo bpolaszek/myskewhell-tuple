@@ -39,10 +39,6 @@ class TupleFactory {
         elseif (is_array($input) && !Tuple::IsAnIndexedArray($input) && count($input) == 1)
             return new ComparisonTuple([array_keys($input)[0], '=', array_values($input)[0]]);
 
-        // Case of ['id', 2] => ['id', '=', 2]
-        elseif (is_array($input) && Tuple::IsAnIndexedArray($input) && count($input) == 2 && is_string($input[0]))
-            return new ComparisonTuple([$input[0], '=', $input[1]]);
-
         // Case of ['id', '=', 2]
         elseif (is_array($input) && count($input) == 3 && ComparisonTuple::ValidateOperator($input[1]))
             return new ComparisonTuple([$input[0], $input[1], $input[2]]);
