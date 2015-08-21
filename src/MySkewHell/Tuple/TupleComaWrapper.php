@@ -15,7 +15,7 @@ class TupleComaWrapper extends TupleConditionnalWrapper implements TupleInterfac
      * @return string
      */
     public function __toString() {
-        return (string) sprintf('(%s)', implode(',' . PHP_EOL, array_map(function ($tuple) { return (string) $tuple; }, $this->getTuples())));
+        return (string) sprintf('%s', implode(',' . PHP_EOL, array_map(function ($tuple) { return (string) $tuple; }, $this->getTuples())));
     }
 
 }
