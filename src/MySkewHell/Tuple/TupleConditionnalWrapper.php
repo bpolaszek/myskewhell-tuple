@@ -119,6 +119,37 @@ abstract class TupleConditionnalWrapper implements \ArrayAccess, \Countable, Tup
     }
 
     /**
+     * @return string
+     */
+    public function simulateSql() {
+        $preview      =   (string) $this;
+
+        if (preg_match('#:([a-zA-Z0-9_]+)#', $preview))
+            $preview = preg_replace('#:([a-zA-Z0-9_]+)#', '?', $preview);
+
+        $nbPlaceHolders     =   substr_count($preview, '?');
+
+        if (count($this->getValues()) === $nbPlaceHolders)
+            $preview  =    vsprintf(str_replace('?', '%s', $preview), array_map(function ($value) {
+
+                if (is_null($value))
+                    return 'NULL';
+
+                elseif (is_bool($value))
+                    return (int) $value;
+
+                elseif (is_numeric($value))
+                    return $value;
+
+                else
+                    return (string) "'". addslashes($value) . "'";
+
+            }, $this->getValues()));
+
+        return str_replace('= NULL', 'IS NULL', $preview);
+    }
+
+    /**
      * @param $value
      * @return $this
      */
