@@ -1,3 +1,5 @@
+**This package is abandonned. Consider upgrading to [bentools/where](https://github.com/bpolaszek/where), a very easy way to generate conditions and full queries on the fly.**
+
 MySkewHell - Tuple
 ==================
 
